@@ -1,6 +1,6 @@
 # Crypto Immobilier Backend
 
-A secure and scalable Node.js backend starter built with Express.js, TypeScript, and MongoDB for a crypto real estate application.
+A secure and scalable Node.js backend for managing real estate reservations, built with Express.js, TypeScript, and MongoDB.
 
 ## Features
 
@@ -8,11 +8,15 @@ A secure and scalable Node.js backend starter built with Express.js, TypeScript,
 - 🛡️ **Security middlewares** (Helmet, CORS, NoSQL injection protection)
 - 📝 **Request logging** with Morgan
 - 🗄️ **MongoDB** integration with Mongoose
+- 🏠 **Reservation Management System** with full CRUD operations
+- ✅ **Data Validation** with custom validation utilities
+- 📊 **Statistics Endpoints** for tracking reservations
 - 🔧 **Development tools** (Nodemon, TypeScript compilation)
 - ⚡ **Hot reload** for development
 - 🔒 **Environment-based configuration**
 - 💥 **Comprehensive error handling**
 - 🎯 **Graceful shutdown handling**
+- 📁 **Modular Architecture** with separate routes, controllers, models, and utilities
 
 ## Prerequisites
 
@@ -58,47 +62,174 @@ A secure and scalable Node.js backend starter built with Express.js, TypeScript,
 
 ```
 src/
-├── app.ts          # Express app configuration and middleware
-├── server.ts       # Server startup and database connection
-└── ...             # Add your routes, models, controllers here
+├── app.ts                    # Express app configuration and middleware
+├── server.ts                 # Server startup and database connection
+├── controllers/
+│   └── userController.ts     # Business logic for reservations
+├── models/
+│   └── User.ts              # MongoDB schema for reservations
+├── routes/
+│   └── userRoutes.ts        # API route definitions
+├── middleware/
+│   └── errorHandler.ts      # Global error handling middleware
+└── utils/
+    ├── errors.ts            # Custom error classes
+    ├── validation.ts        # Input validation utilities
+    └── asyncHandler.ts      # Async error wrapper
 
-dist/               # Compiled JavaScript (generated)
+dist/                        # Compiled JavaScript (generated)
 ```
 
 ## API Endpoints
 
-Currently includes:
-- Global error handling for undefined routes
-- Health check capabilities
-
-### Adding New Routes
-
-Create your routes in separate files and import them in `app.ts`:
-
-```typescript
-// Example: src/routes/auth.ts
-import { Router } from 'express';
-const router = Router();
-
-router.post('/login', (req, res) => {
-  // Your login logic
-});
-
-export default router;
+### Base URL
+```
+http://localhost:8000/api
 ```
 
+### Health Check
+- **GET** `/health` - Server health check
+
+### Reservation Management
+
+#### 1. Create Reservation
+- **POST** `/api/users`
+- **Description**: Submit a new reservation form
+- **Request Body**:
+  ```json
+  {
+    "name": "John Doe",
+    "number": "+1234567890",
+    "message": "Interested in a 2-bedroom apartment",
+    "apartmentType": "2BR Deluxe"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Reservation created successfully",
+    "data": {
+      "id": "64f7b8c9e12345678901234a",
+      "name": "John Doe",
+      "number": "+1234567890",
+      "message": "Interested in a 2-bedroom apartment",
+      "apartmentType": "2BR Deluxe",
+      "date": "2023-09-05T10:30:00.000Z",
+      "status": "Pending"
+    }
+  }
+  ```
+
+#### 2. Get All Reservations
+- **GET** `/api/users`
+- **Description**: Retrieve all reservations (sorted by newest first)
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Users retrieved successfully",
+    "count": 2,
+    "data": [...]
+  }
+  ```
+
+#### 3. Update Reservation Status
+- **PUT** `/api/users/:id/status`
+- **Description**: Update the status of a specific reservation
+- **Request Body**:
+  ```json
+  {
+    "status": "Done"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Reservation status updated successfully",
+    "data": {
+      "id": "64f7b8c9e12345678901234a",
+      "status": "Done",
+      ...
+    }
+  }
+  ```
+
+### Statistics Endpoints
+
+#### 4. Total Reservations Count
+- **GET** `/api/users/count`
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "count": 15
+  }
+  ```
+
+#### 5. Completed Reservations Count
+- **GET** `/api/users/count/done`
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "count": 8
+  }
+  ```
+
+#### 6. Pending Reservations Count
+- **GET** `/api/users/count/pending`
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "count": 7
+  }
+  ```
+
+### Data Model
+
+#### Reservation Schema
 ```typescript
-// In app.ts
-import authRoutes from './routes/auth';
-app.use('/api/auth', authRoutes);
+{
+  name: string;          // Required, max 100 characters
+  number: string;        // Required, max 20 characters
+  message: string;       // Required, max 1000 characters
+  apartmentType: string; // Required, max 50 characters
+  date: Date;           // Auto-generated timestamp
+  status: "Pending" | "Done"; // Default: "Pending"
+  id: string;           // Auto-generated MongoDB ObjectId
+}
 ```
+
+### Error Responses
+
+All endpoints return consistent error responses:
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Validation failed: Name is required"
+  }
+}
+```
+
+Common HTTP status codes:
+- `200` - Success
+- `201` - Created
+- `400` - Validation Error
+- `404` - Not Found
+- `500` - Server Error
 
 ## Security Features
 
 - **Helmet**: Sets security-related HTTP headers
 - **CORS**: Configurable cross-origin resource sharing
 - **NoSQL Injection Protection**: Sanitizes user input
+- **Input Validation**: Comprehensive validation for all user inputs
 - **Error Handling**: Prevents sensitive information leakage
+- **Async Error Handling**: Proper error catching for all async operations
 
 ## Environment Variables
 
