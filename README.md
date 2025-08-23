@@ -16,6 +16,9 @@ A secure and scalable Node.js backend for managing real estate reservations, bui
 - ✅ **Data Validation** with custom validation utilities
 - 📊 **Statistics Endpoints** for tracking reservations
 - 👑 **Super Admin Management** with automated seeding
+- 🎨 **Dashboard FYH Section** - Manage 3 featured property cards
+- 🏆 **Best Sellers Management** - Region-based apartment listings with types
+- ☁️ **Cloudinary Integration** for image management
 - 🔧 **Development tools** (Nodemon, TypeScript compilation)
 - ⚡ **Hot reload** for development
 - 🔒 **Environment-based configuration**
@@ -58,6 +61,11 @@ A secure and scalable Node.js backend for managing real estate reservations, bui
    # JWT Configuration
    JWT_SECRET=your-super-secret-jwt-key-here
    JWT_EXPIRES_IN=30d
+
+   # Cloudinary Configuration
+   CLOUDINARY_CLOUD_NAME=your-cloud-name
+   CLOUDINARY_API_KEY=254578117843866
+   CLOUDINARY_API_SECRET=4muVbUpzK541DiNh6bCVPXURop0
    ```
 
 ## Scripts
@@ -270,7 +278,165 @@ Authorization: Bearer <your-jwt-token>
   }
   ```
 
-### Data Model
+### Dashboard FYH Section (Protected Routes)
+
+**Note**: All dashboard endpoints require JWT authentication.
+
+#### 1. Initialize/Create Dashboard Div
+- **POST** `/api/dashboard/divs`
+- **Description**: Create or update one of the 3 dashboard divs
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "id": 1,
+    "photoUrl": "https://res.cloudinary.com/your-cloud/image/upload/v123456789/property.jpg",
+    "price": 250000,
+    "apartment": "Luxury Villa"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Dashboard div 1 updated successfully",
+    "data": {
+      "id": 1,
+      "photoUrl": "https://res.cloudinary.com/your-cloud/image/upload/v123456789/property.jpg",
+      "price": 250000,
+      "apartment": "Luxury Villa"
+    }
+  }
+  ```
+
+#### 2. Update Dashboard Div
+- **PUT** `/api/dashboard/divs/:id`
+- **Description**: Update specific fields of a dashboard div
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body** (all fields optional):
+  ```json
+  {
+    "photoUrl": "https://res.cloudinary.com/your-cloud/image/upload/v123456789/new-property.jpg",
+    "price": 300000,
+    "apartment": "Premium Villa"
+  }
+  ```
+
+#### 3. Get All Dashboard Divs
+- **GET** `/api/dashboard/divs`
+- **Description**: Retrieve all 3 dashboard divs
+- **Headers**: `Authorization: Bearer <token>`
+
+#### 4. Get Specific Dashboard Div
+- **GET** `/api/dashboard/divs/:id`
+- **Description**: Retrieve a specific dashboard div (id: 1, 2, or 3)
+- **Headers**: `Authorization: Bearer <token>`
+
+### Best Sellers Section (Protected Routes)
+
+**Note**: All best sellers endpoints require JWT authentication.
+
+#### Region Management
+
+#### 1. Create Region
+- **POST** `/api/bestsellers/regions`
+- **Description**: Add a new region
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "name": "Algiers"
+  }
+  ```
+
+#### 2. Get All Regions
+- **GET** `/api/bestsellers/regions`
+- **Description**: Fetch all regions with their apartments
+- **Headers**: `Authorization: Bearer <token>`
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Regions retrieved successfully",
+    "count": 2,
+    "data": [
+      {
+        "id": "uuid-region-1",
+        "name": "Algiers",
+        "apartments": [...]
+      }
+    ]
+  }
+  ```
+
+#### 3. Delete Region
+- **DELETE** `/api/bestsellers/regions/:regionId`
+- **Description**: Remove a region and all its apartments
+- **Headers**: `Authorization: Bearer <token>`
+
+#### Apartment Management
+
+#### 4. Add Apartment to Region
+- **POST** `/api/bestsellers/regions/:regionId/apartments`
+- **Description**: Add a new apartment to a region
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "imageUrl": "https://res.cloudinary.com/your-cloud/image/upload/v123456789/apartment.jpg",
+    "description": "Modern flat with sea view",
+    "types": ["F2", "F3"]
+  }
+  ```
+
+#### 5. Update Apartment
+- **PUT** `/api/bestsellers/regions/:regionId/apartments/:apartmentId`
+- **Description**: Update apartment details
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body** (all fields optional):
+  ```json
+  {
+    "imageUrl": "https://res.cloudinary.com/your-cloud/image/upload/v123456789/new-apartment.jpg",
+    "description": "Updated description",
+    "types": ["F2", "F3", "Duplex"]
+  }
+  ```
+
+#### 6. Delete Apartment
+- **DELETE** `/api/bestsellers/regions/:regionId/apartments/:apartmentId`
+- **Description**: Delete an apartment from a region
+- **Headers**: `Authorization: Bearer <token>`
+
+#### Type Management
+
+#### 7. Add Type to Apartment
+- **POST** `/api/bestsellers/regions/:regionId/apartments/:apartmentId/types`
+- **Description**: Add a new type to an apartment
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "name": "Penthouse"
+  }
+  ```
+
+#### 8. Update Type
+- **PUT** `/api/bestsellers/regions/:regionId/apartments/:apartmentId/types/:typeId`
+- **Description**: Update type name
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "name": "Luxury Penthouse"
+  }
+  ```
+
+#### 9. Delete Type
+- **DELETE** `/api/bestsellers/regions/:regionId/apartments/:apartmentId/types/:typeId`
+- **Description**: Delete a type from an apartment
+- **Headers**: `Authorization: Bearer <token>`
+
+### Data Models
 
 #### Reservation Schema
 ```typescript
@@ -282,6 +448,37 @@ Authorization: Bearer <your-jwt-token>
   date: Date;           // Auto-generated timestamp
   status: "Pending" | "Done"; // Default: "Pending"
   id: string;           // Auto-generated MongoDB ObjectId
+}
+```
+
+#### Dashboard Div Schema
+```typescript
+{
+  id: 1 | 2 | 3;        // Fixed values only
+  photoUrl: string;     // Cloudinary URL
+  price: number;        // Positive number
+  apartment: string;    // Max 100 characters
+}
+```
+
+#### Region Schema
+```typescript
+{
+  id: string;           // UUID
+  name: string;         // Max 100 characters
+  apartments: [
+    {
+      id: string;       // UUID
+      imageUrl: string; // Cloudinary URL
+      description: string; // Max 500 characters
+      types: [
+        {
+          id: string;   // UUID
+          name: string; // e.g., "F2", "F3", "Duplex"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -327,6 +524,9 @@ Common HTTP status codes:
 | `FRONTEND_URL` | Frontend URL for CORS | `http://localhost:3000` |
 | `JWT_SECRET` | Secret key for JWT token signing | Required |
 | `JWT_EXPIRES_IN` | JWT token expiration time | `30d` |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Required |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | Required |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Required |
 
 ## Development
 

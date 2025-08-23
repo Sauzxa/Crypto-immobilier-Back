@@ -1,6 +1,7 @@
 import app from './app';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { verifyCloudinaryConfig } from './config/cloudinary';
 
 // Load environment variables
 dotenv.config();
@@ -13,6 +14,9 @@ if (!MONGO_URL) {
   console.error('Error: MONGODB_URI environment variable is required');
   process.exit(1);
 }
+
+// Verify Cloudinary configuration
+verifyCloudinaryConfig();
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URL)

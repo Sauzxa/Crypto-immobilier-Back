@@ -13,7 +13,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/multer": "^2.0.0",
+    "@types/uuid": "^10.0.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^4.19.2",
@@ -21,7 +24,9 @@
     "helmet": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -7,6 +7,8 @@ import cors from "cors";
 // Import routes
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
+import bestSellersRoutes from './routes/bestSellersRoutes';
 
 // Import middleware
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -37,6 +39,8 @@ app.get('/health', (req: Request, res: Response) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/bestsellers', bestSellersRoutes);
 
 // API info endpoint
 app.get('/api', (req: Request, res: Response) => {
@@ -57,7 +61,16 @@ app.get('/api', (req: Request, res: Response) => {
       updateStatus: 'PUT /api/users/:id/status',
       totalCount: 'GET /api/users/count',
       doneCount: 'GET /api/users/count/done',
-      pendingCount: 'GET /api/users/count/pending'
+      pendingCount: 'GET /api/users/count/pending',
+      // Dashboard endpoints (protected - requires JWT)
+      dashboardDivs: 'GET /api/dashboard/divs',
+      createOrUpdateDiv: 'POST /api/dashboard/divs',
+      updateDiv: 'PUT /api/dashboard/divs/:id',
+      // Best Sellers endpoints (protected - requires JWT)
+      regions: 'GET /api/bestsellers/regions',
+      createRegion: 'POST /api/bestsellers/regions',
+      apartments: 'POST /api/bestsellers/regions/:regionId/apartments',
+      types: 'POST /api/bestsellers/regions/:regionId/apartments/:apartmentId/types'
     }
   });
 });
