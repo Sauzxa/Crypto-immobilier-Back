@@ -5,12 +5,17 @@ A secure and scalable Node.js backend for managing real estate reservations, bui
 ## Features
 
 - 🚀 **Express.js** with TypeScript
+- 🔐 **JWT Authentication** with super admin access
+- 🔒 **Secure Password Hashing** with bcrypt
+- 🚪 **Login/Logout System** with token invalidation
+- 🛡️ **Protected Routes** - All reservation endpoints require authentication
 - 🛡️ **Security middlewares** (Helmet, CORS, NoSQL injection protection)
 - 📝 **Request logging** with Morgan
 - 🗄️ **MongoDB** integration with Mongoose
 - 🏠 **Reservation Management System** with full CRUD operations
 - ✅ **Data Validation** with custom validation utilities
 - 📊 **Statistics Endpoints** for tracking reservations
+- 👑 **Super Admin Management** with automated seeding
 - 🔧 **Development tools** (Nodemon, TypeScript compilation)
 - ⚡ **Hot reload** for development
 - 🔒 **Environment-based configuration**
@@ -49,6 +54,10 @@ A secure and scalable Node.js backend for managing real estate reservations, bui
 
    # Frontend Configuration (for CORS)
    FRONTEND_URL=http://localhost:3000
+
+   # JWT Configuration
+   JWT_SECRET=your-super-secret-jwt-key-here
+   JWT_EXPIRES_IN=30d
    ```
 
 ## Scripts
@@ -58,6 +67,7 @@ A secure and scalable Node.js backend for managing real estate reservations, bui
 - **Production**: `npm start` - Run compiled JavaScript
 - **Type Check**: `npx tsc --noEmit` - Check TypeScript types
 
+
 ## Project Structure
 
 ```
@@ -65,13 +75,17 @@ src/
 ├── app.ts                    # Express app configuration and middleware
 ├── server.ts                 # Server startup and database connection
 ├── controllers/
-│   └── userController.ts     # Business logic for reservations
+│   ├── userController.ts     # Business logic for reservations
+│   └── authController.ts     # Authentication logic (login/logout)
 ├── models/
-│   └── User.ts              # MongoDB schema for reservations
+│   ├── User.ts              # MongoDB schema for reservations
+│   └── Admin.ts             # MongoDB schema for admin
 ├── routes/
-│   └── userRoutes.ts        # API route definitions
+│   ├── userRoutes.ts        # API route definitions for reservations
+│   └── authRoutes.ts        # API route definitions for authentication
 ├── middleware/
-│   └── errorHandler.ts      # Global error handling middleware
+│   ├── errorHandler.ts      # Global error handling middleware
+│   └── auth.ts              # JWT authentication middleware
 └── utils/
     ├── errors.ts            # Custom error classes
     ├── validation.ts        # Input validation utilities
@@ -90,7 +104,75 @@ http://localhost:8000/api
 ### Health Check
 - **GET** `/health` - Server health check
 
-### Reservation Management
+### Authentication
+
+#### 1. Initial Admin Setup (One-time)
+- **POST** `/api/auth/setup`
+- **Description**: Create the initial admin account (only works if no admin exists)
+- **Request Body**:
+  ```json
+  {
+    "email": "crypto.immobilier@gmail.com",
+    "password": "crypto_2222"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Initial admin created successfully",
+    "data": {
+      "admin": {
+        "id": "64f7b8c9e12345678901234a",
+        "email": "crypto.immobilier@gmail.com"
+      }
+    }
+  }
+  ```
+
+#### 2. Admin Login
+- **POST** `/api/auth/login`
+- **Description**: Admin login to get JWT token
+- **Request Body**:
+  ```json
+  {
+    "email": "crypto.immobilier@gmail.com",
+    "password": "crypto_2222"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Login successful",
+    "data": {
+      "admin": {
+        "id": "64f7b8c9e12345678901234a",
+        "email": "crypto.immobilier@gmail.com"
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+  }
+  ```
+
+#### 3. Admin Logout
+- **POST** `/api/auth/logout`
+- **Description**: Logout admin and invalidate token
+- **Headers**: `Authorization: Bearer <token>`
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Logout successful"
+  }
+  ```
+
+### Reservation Management (Protected Routes)
+
+**Note**: All reservation endpoints require JWT authentication. Include the token in the Authorization header:
+```
+Authorization: Bearer <your-jwt-token>
+```
 
 #### 1. Create Reservation
 - **POST** `/api/users`
@@ -224,6 +306,10 @@ Common HTTP status codes:
 
 ## Security Features
 
+- **JWT Authentication**: Secure token-based authentication for admin access
+- **Password Hashing**: Bcrypt with salt for secure password storage
+- **Token Blacklisting**: Logout system invalidates tokens
+- **Route Protection**: All reservation endpoints require authentication
 - **Helmet**: Sets security-related HTTP headers
 - **CORS**: Configurable cross-origin resource sharing
 - **NoSQL Injection Protection**: Sanitizes user input
@@ -239,6 +325,8 @@ Common HTTP status codes:
 | `NODE_ENV` | Environment mode | `development` |
 | `MONGODB_URI` | MongoDB connection string | Required |
 | `FRONTEND_URL` | Frontend URL for CORS | `http://localhost:3000` |
+| `JWT_SECRET` | Secret key for JWT token signing | Required |
+| `JWT_EXPIRES_IN` | JWT token expiration time | `30d` |
 
 ## Development
 
@@ -247,7 +335,10 @@ Common HTTP status codes:
    ```bash
    npm run dev
    ```
-3. **Server will start** at `http://localhost:8000`
+3. **Create Initial Admin** (using Postman or any HTTP client):
+   - **POST** `http://localhost:8000/api/auth/setup`
+   - **Body**: `{ "email": "crypto.immobilier@gmail.com", "password": "crypto_2222" }`
+4. **Server will be ready** at `http://localhost:8000`
 
 ## Production Deployment
 

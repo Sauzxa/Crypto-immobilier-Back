@@ -6,6 +6,7 @@ import cors from "cors";
 
 // Import routes
 import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes';
 
 // Import middleware
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -34,6 +35,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // API routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
 // API info endpoint
@@ -44,6 +46,11 @@ app.get('/api', (req: Request, res: Response) => {
     version: '1.0.0',
     endpoints: {
       health: '/health',
+      // Authentication endpoints (public)
+      initialSetup: 'POST /api/auth/setup',
+      login: 'POST /api/auth/login',
+      logout: 'POST /api/auth/logout',
+      // Reservation endpoints (protected - requires JWT)
       users: '/api/users',
       createReservation: 'POST /api/users',
       getAllReservations: 'GET /api/users',
