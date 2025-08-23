@@ -26,9 +26,10 @@ const DashboardDivSchema: Schema = new Schema({
     trim: true,
     validate: {
       validator: function(url: string) {
-        // Basic URL validation for Cloudinary URLs
-        return /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(url) || 
-               /^https:\/\/res\.cloudinary\.com\//.test(url);
+        // URL validation for various image providers
+        return /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i.test(url) || 
+               /^https:\/\/res\.cloudinary\.com\//.test(url) ||
+               /^https:\/\/images\.unsplash\.com\//.test(url);
       },
       message: 'Please provide a valid image URL'
     }

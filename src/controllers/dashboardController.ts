@@ -28,10 +28,11 @@ export const upsertDashboardDiv = asyncHandler(async (req: Request, res: Respons
       throw new ValidationError('PhotoUrl and apartment must be strings');
     }
 
-    // Validate URL format
-    const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i;
+    // Validate URL format (more flexible to allow query parameters)
+    const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i;
     const cloudinaryPattern = /^https:\/\/res\.cloudinary\.com\//;
-    if (!urlPattern.test(photoUrl) && !cloudinaryPattern.test(photoUrl)) {
+    const unsplashPattern = /^https:\/\/images\.unsplash\.com\//;
+    if (!urlPattern.test(photoUrl) && !cloudinaryPattern.test(photoUrl) && !unsplashPattern.test(photoUrl)) {
       throw new ValidationError('Please provide a valid image URL');
     }
 
@@ -83,9 +84,10 @@ export const updateDashboardDiv = asyncHandler(async (req: Request, res: Respons
       if (typeof photoUrl !== 'string') {
         throw new ValidationError('PhotoUrl must be a string');
       }
-      const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i;
+      const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i;
       const cloudinaryPattern = /^https:\/\/res\.cloudinary\.com\//;
-      if (!urlPattern.test(photoUrl) && !cloudinaryPattern.test(photoUrl)) {
+      const unsplashPattern = /^https:\/\/images\.unsplash\.com\//;
+      if (!urlPattern.test(photoUrl) && !cloudinaryPattern.test(photoUrl) && !unsplashPattern.test(photoUrl)) {
         throw new ValidationError('Please provide a valid image URL');
       }
       updateData.photoUrl = photoUrl.trim();
