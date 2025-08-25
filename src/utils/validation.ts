@@ -4,9 +4,9 @@ import { ValidationError } from './errors';
 export interface CreateUserRequest {
   name: string;
   number: string;
-  message: string;
-  apartmentType: string;
-  date?: Date;
+  message?: string;
+  typeAppartement: string;
+  reservationDate: Date;
 }
 
 export interface UpdateStatusRequest {
@@ -35,27 +35,27 @@ export const validateCreateUser = (data: any): CreateUserRequest => {
     errors.push('Phone number cannot exceed 20 characters');
   }
 
-  // Validate message
-  if (!data.message || typeof data.message !== 'string') {
-    errors.push('Message is required and must be a string');
-  } else if (data.message.trim().length === 0) {
-    errors.push('Message cannot be empty');
-  } else if (data.message.length > 1000) {
+  // Validate message (optional)
+  if (data.message && typeof data.message !== 'string') {
+    errors.push('Message must be a string');
+  } else if (data.message && data.message.length > 1000) {
     errors.push('Message cannot exceed 1000 characters');
   }
 
-  // Validate apartmentType
-  if (!data.apartmentType || typeof data.apartmentType !== 'string') {
+  // Validate typeAppartement
+  if (!data.typeAppartement || typeof data.typeAppartement !== 'string') {
     errors.push('Apartment type is required and must be a string');
-  } else if (data.apartmentType.trim().length === 0) {
+  } else if (data.typeAppartement.trim().length === 0) {
     errors.push('Apartment type cannot be empty');
-  } else if (data.apartmentType.length > 50) {
+  } else if (data.typeAppartement.length > 50) {
     errors.push('Apartment type cannot exceed 50 characters');
   }
 
-  // Validate date if provided
-  if (data.date && !isValidDate(data.date)) {
-    errors.push('Date must be a valid date');
+  // Validate reservationDate (required)
+  if (!data.reservationDate) {
+    errors.push('Reservation date is required');
+  } else if (!isValidDate(data.reservationDate)) {
+    errors.push('Reservation date must be a valid date');
   }
 
   if (errors.length > 0) {
@@ -65,9 +65,9 @@ export const validateCreateUser = (data: any): CreateUserRequest => {
   return {
     name: data.name.trim(),
     number: data.number.trim(),
-    message: data.message.trim(),
-    apartmentType: data.apartmentType.trim(),
-    ...(data.date && { date: new Date(data.date) })
+    ...(data.message && { message: data.message.trim() }),
+    typeAppartement: data.typeAppartement.trim(),
+    reservationDate: new Date(data.reservationDate)
   };
 };
 

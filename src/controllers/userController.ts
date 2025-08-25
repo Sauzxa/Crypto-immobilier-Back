@@ -30,7 +30,7 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 // Get all reservations
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const users = await User.find().sort({ date: -1 }); // Sort by newest first
+    const users = await User.find().sort({ reservationDate: -1 }); // Sort by newest first
 
     res.status(200).json({
       success: true,

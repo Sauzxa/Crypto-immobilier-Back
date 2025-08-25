@@ -11,11 +11,11 @@ import { protect } from '../middleware/auth';
 
 const router = Router();
 
-// Apply JWT protection to all routes
-router.use(protect);
-
-// POST /users - Create a new reservation (protected)
+// POST /users - Create a new reservation (public - no JWT required)
 router.post('/', createUser);
+
+// Apply JWT protection to admin routes only
+router.use(protect);
 
 // GET /users - Get all reservations (protected)
 router.get('/', getAllUsers);

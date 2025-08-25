@@ -3,9 +3,9 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
   name: string;
   number: string;
-  message: string;
-  apartmentType: string;
-  date: Date;
+  message?: string;
+  typeAppartement: string;
+  reservationDate: Date;
   status: 'Pending' | 'Done';
   id: string;
 }
@@ -25,19 +25,19 @@ const UserSchema: Schema = new Schema({
   },
   message: {
     type: String,
-    required: [true, 'Message is required'],
+    required: false,
     trim: true,
     maxlength: [1000, 'Message cannot exceed 1000 characters']
   },
-  apartmentType: {
+  typeAppartement: {
     type: String,
     required: [true, 'Apartment type is required'],
     trim: true,
     maxlength: [50, 'Apartment type cannot exceed 50 characters']
   },
-  date: {
+  reservationDate: {
     type: Date,
-    default: Date.now
+    required: [true, 'Reservation date is required']
   },
   status: {
     type: String,
@@ -52,6 +52,6 @@ const UserSchema: Schema = new Schema({
 
 // Create index for better query performance
 UserSchema.index({ status: 1 });
-UserSchema.index({ date: -1 });
+UserSchema.index({ reservationDate: -1 });
 
 export default mongoose.model<IUser>('User', UserSchema);

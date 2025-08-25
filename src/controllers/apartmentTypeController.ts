@@ -72,6 +72,8 @@ export const getAllApartmentTypes = asyncHandler(async (req: Request, res: Respo
   }
 });
 
+
+
 // Get apartment type by ID
 export const getApartmentTypeById = asyncHandler(async (req: Request, res: Response) => {
   try {

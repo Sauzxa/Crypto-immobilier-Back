@@ -10,14 +10,14 @@ import { protect } from '../middleware/auth';
 
 const router = Router();
 
-// Apply JWT protection to all apartment type routes
+// GET /apartment-types - Get all apartment types (public for form dropdown)
+router.get('/', getAllApartmentTypes);
+
+// Apply JWT protection to admin apartment type routes (create, update, delete)
 router.use(protect);
 
 // POST /apartment-types - Create a new apartment type (protected)
 router.post('/', createApartmentType);
-
-// GET /apartment-types - Get all apartment types (protected)
-router.get('/', getAllApartmentTypes);
 
 // GET /apartment-types/:id - Get apartment type by ID (protected)
 router.get('/:id', getApartmentTypeById);
