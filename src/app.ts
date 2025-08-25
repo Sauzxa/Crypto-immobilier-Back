@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import bestSellersRoutes from './routes/bestSellersRoutes';
 import apartmentTypeRoutes from './routes/apartmentTypeRoutes';
+import heroSectionNumbersRoutes from './routes/heroSectionNumbersRoutes';
 
 // Import middleware
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -43,6 +44,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/bestsellers', bestSellersRoutes);
 app.use('/api/apartment-types', apartmentTypeRoutes);
+app.use('/api/hero-section-numbers', heroSectionNumbersRoutes);
 
 // API info endpoint
 app.get('/api', (req: Request, res: Response) => {
@@ -78,7 +80,10 @@ app.get('/api', (req: Request, res: Response) => {
       createApartmentType: 'POST /api/apartment-types',
       getApartmentType: 'GET /api/apartment-types/:id',
       updateApartmentType: 'PUT /api/apartment-types/:id',
-      deleteApartmentType: 'DELETE /api/apartment-types/:id'
+      deleteApartmentType: 'DELETE /api/apartment-types/:id',
+      // Hero Section Numbers endpoints (protected - requires JWT)
+      heroSectionNumbers: 'GET /api/hero-section-numbers',
+      updateHeroSectionNumbers: 'PUT /api/hero-section-numbers'
     }
   });
 });
