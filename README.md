@@ -436,6 +436,45 @@ Authorization: Bearer <your-jwt-token>
 - **Description**: Delete a type from an apartment
 - **Headers**: `Authorization: Bearer <token>`
 
+### Apartment Types Management
+
+#### 1. Get All Apartment Types
+- **GET** `/api/apartment-types`
+- **Description**: Retrieve all apartment types
+- **Headers**: `Authorization: Bearer <token>`
+
+#### 2. Create Apartment Type
+- **POST** `/api/apartment-types`
+- **Description**: Create a new apartment type
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "name": "Studio"
+  }
+  ```
+
+#### 3. Get Apartment Type by ID
+- **GET** `/api/apartment-types/:id`
+- **Description**: Retrieve a specific apartment type by ID
+- **Headers**: `Authorization: Bearer <token>`
+
+#### 4. Update Apartment Type
+- **PUT** `/api/apartment-types/:id`
+- **Description**: Update apartment type name
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "name": "Luxury Studio"
+  }
+  ```
+
+#### 5. Delete Apartment Type
+- **DELETE** `/api/apartment-types/:id`
+- **Description**: Delete an apartment type
+- **Headers**: `Authorization: Bearer <token>`
+
 ### Data Models
 
 #### Reservation Schema
@@ -479,6 +518,16 @@ Authorization: Bearer <your-jwt-token>
       ]
     }
   ]
+}
+```
+
+#### Apartment Type Schema
+```typescript
+{
+  id: string;           // UUID
+  name: string;         // Max 50 characters, required
+  createdAt: Date;      // Auto-generated timestamp
+  updatedAt: Date;      // Auto-updated timestamp
 }
 ```
 

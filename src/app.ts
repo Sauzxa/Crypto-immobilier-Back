@@ -9,6 +9,7 @@ import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import bestSellersRoutes from './routes/bestSellersRoutes';
+import apartmentTypeRoutes from './routes/apartmentTypeRoutes';
 
 // Import middleware
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -41,6 +42,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/bestsellers', bestSellersRoutes);
+app.use('/api/apartment-types', apartmentTypeRoutes);
 
 // API info endpoint
 app.get('/api', (req: Request, res: Response) => {
@@ -70,7 +72,13 @@ app.get('/api', (req: Request, res: Response) => {
       regions: 'GET /api/bestsellers/regions',
       createRegion: 'POST /api/bestsellers/regions',
       apartments: 'POST /api/bestsellers/regions/:regionId/apartments',
-      types: 'POST /api/bestsellers/regions/:regionId/apartments/:apartmentId/types'
+      types: 'POST /api/bestsellers/regions/:regionId/apartments/:apartmentId/types',
+      // Apartment Types endpoints (protected - requires JWT)
+      apartmentTypes: 'GET /api/apartment-types',
+      createApartmentType: 'POST /api/apartment-types',
+      getApartmentType: 'GET /api/apartment-types/:id',
+      updateApartmentType: 'PUT /api/apartment-types/:id',
+      deleteApartmentType: 'DELETE /api/apartment-types/:id'
     }
   });
 });
