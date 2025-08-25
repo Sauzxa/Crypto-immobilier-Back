@@ -17,15 +17,15 @@ import { protect } from '../middleware/auth';
 
 const router = Router();
 
-// Apply JWT protection to all best sellers routes
+// GET /bestsellers/regions - Fetch all regions with apartments (public)
+router.get('/regions', getAllRegions);
+
+// Apply JWT protection to admin best sellers routes
 router.use(protect);
 
 // REGION ROUTES
 // POST /bestsellers/regions - Add a new region
 router.post('/regions', createRegion);
-
-// GET /bestsellers/regions - Fetch all regions with apartments
-router.get('/regions', getAllRegions);
 
 // DELETE /bestsellers/regions/:regionId - Remove a region and all its apartments
 router.delete('/regions/:regionId', deleteRegion);

@@ -7,11 +7,11 @@ import { protect } from '../middleware/auth';
 
 const router = express.Router();
 
-// Apply authentication middleware to all routes
-router.use(protect);
-
-// GET /hero-section-numbers - Get hero section numbers
+// GET /hero-section-numbers - Get hero section numbers (public)
 router.get('/', getHeroSectionNumbers);
+
+// Apply authentication middleware to admin routes
+router.use(protect);
 
 // PUT /hero-section-numbers - Update hero section numbers
 router.put('/', updateHeroSectionNumbers);
