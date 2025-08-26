@@ -1,6 +1,6 @@
 # Crypto Immobilier Backend
 
-A secure and scalable Node.js backend for managing real estate reservations, built with Express.js, TypeScript, and MongoDB.
+A secure and scalable Node.js backend for managing real estate reservations, built with Express.js, TypeScript, Cloudinary ,and MongoDB.
 
 ## Features
 
