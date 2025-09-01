@@ -5,7 +5,8 @@ import {
   updateUserStatus,
   getTotalCount,
   getDoneCount,
-  getPendingCount
+  getPendingCount,
+  deleteOrder
 } from '../controllers/userController';
 import { protect } from '../middleware/auth';
 
@@ -31,5 +32,8 @@ router.get('/count/done', getDoneCount);
 
 // GET /users/count/pending - Get count of pending reservations (protected)
 router.get('/count/pending', getPendingCount);
+
+// DELETE /users/:id - Delete a reservation by ID (protected - admin only)
+router.delete('/:id', deleteOrder);
 
 export default router;

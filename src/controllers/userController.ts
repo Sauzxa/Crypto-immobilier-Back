@@ -119,3 +119,31 @@ export const getPendingCount = asyncHandler(async (req: Request, res: Response) 
     throw new DatabaseError('Failed to get pending count');
   }
 });
+
+// Delete a reservation by ID
+export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    
+    // Validate ID format
+    validateObjectId(id);
+
+    // Find and delete the reservation
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      throw new NotFoundError(`Reservation with ID ${id} not found`);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Reservation deleted successfully',
+      data: deletedUser
+    });
+  } catch (error: any) {
+    if (error.name === 'CastError') {
+      throw new NotFoundError(`Reservation with ID ${req.params.id} not found`);
+    }
+    throw error;
+  }
+});
